@@ -354,36 +354,93 @@ const Store = (function () {
 })();
 
 const AudioManager = (function () {
-  const MUTE_KEY = "audio_muted";
-  let muted = Store.read(MUTE_KEY, false) === true;
-  function setMuted(value) {
-    muted = Boolean(value);
-    Store.write(MUTE_KEY, muted);
-    if (muted && "speechSynthesis" in window) window.speechSynthesis.cancel();
+const MUTE_KEY = "audio_muted";
+let muted = Store.read(MUTE_KEY, false) === true;
+
+// 创建一个复用的 audio 元素
+const audioEl = new Audio();
+audioEl.preload = "auto"; // 预加载
+
+// 有道发音接口，type=2 为美音，type=1 为英音
+const YOUDAO_TTS_API = "https://dict.youdao.com/dictvoice?type=2&audio=";
+
+// 错误处理：如果音频加载或播放失败，给出提示
+audioEl.addEventListener('error', () => {
+if (window.showToast) {
+window.showToast("语音加载失败，请检查网络");
+}
+console.error("有道TTS音频加载失败:", audioEl.src);
+});
+
+function setMuted(value) {
+muted = Boolean(value);
+Store.write(MUTE_KEY, muted);
+if (muted) {
+audioEl.pause();
+audioEl.currentTime = 0;
+}
+}
+
+function toggle() { setMuted(!muted); return muted; }
+function isMuted() { return muted; }
+
+/**
+
+• 播放有道TTS语音
+• @param {string} text - 要发音的英文单词或句子
+*/
+function speak(text) {
+if (muted) return false;
+if (!text) return false;
+
+
+try {
+  // 如果正在播放，先暂停并重置，避免快速点击时声音叠加
+  audioEl.pause();
+  audioEl.currentTime = 0;
+  
+  // 对文本进行编码，防止特殊字符导致URL错误
+  const encodedText = encodeURIComponent(text);
+  audioEl.src = YOUDAO_TTS_API + encodedText;
+  
+  // play() 返回 Promise，便于捕获播放错误
+  const playPromise = audioEl.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(error => {
+      // 移动端浏览器可能因为用户未交互而阻止自动播放
+      console.warn("自动播放被阻止，需要用户点击后才能播放:", error);
+      // 这里可以给用户一个更友好的提示
+      if (window.showToast) {
+        window.showToast("请先点击屏幕，然后再试一次");
+      }
+    });
   }
-  function toggle() { setMuted(!muted); return muted; }
-  function isMuted() { return muted; }
-  function speak(text, options) {
-    if (muted) return false;
-    if (!("speechSynthesis" in window)) {
-      if (window.showToast) window.showToast("当前浏览器不支持语音，请看文字提示");
-      return false;
-    }
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = (options && options.rate) || 0.82;
-      utterance.pitch = 1.05;
-      utterance.volume = 1;
-      window.speechSynthesis.speak(utterance);
-      return true;
-    } catch (error) { return false; }
+  return true;
+} catch (error) {
+  console.error("播放有道TTS失败:", error);
+  if (window.showToast) {
+    window.showToast("语音播放失败，请稍后再试");
   }
-  function speakSentence(words) { return speak(words.join(" "), { rate: 0.78 }); }
-  function playCorrect() { if (!muted) speak("Great job"); }
-  function playWrong() { if (!muted) speak("Try again"); }
-  return { speak, speakSentence, setMuted, toggle, isMuted, playCorrect, playWrong };
+  return false;
+}
+
+}
+
+// 播放句子的函数，直接复用 speak，因为有道接口同样支持句子
+function speakSentence(words) {
+return speak(words.join(" "));
+}
+
+// 播放正确/错误音效，可以继续使用简单的提示音，或者也用有道接口
+function playCorrect() {
+if (!muted) speak("Great job");
+}
+
+function playWrong() {
+if (!muted) speak("Try again");
+}
+
+return { speak, speakSentence, setMuted, toggle, isMuted, playCorrect, playWrong };
 })();
 
 const DifficultyManager = (function () {
