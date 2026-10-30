@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#eaf5ff" />
+<title>英语奇趣岛 · 完整版</title>
+<style>
+:root {
+  --bg: #eaf5ff;
+  --card: #ffffff;
+  --text: #24324a;
+  --muted: #6b7c93;
+  --primary: #2f80ed;
+  --primary-dark: #1c5fa8;
+  --line: #d8e3f0;
+  --soft: #f4f8ff;
+  --danger: #d64545;
+  --star: #f5a623;
+  --success: #1f9d55;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, #eaf5ff 0%, #f8fbff 55%, #fff7e8 100%);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  overflow-x: hidden;
+}
+body { padding-bottom: env(safe-area-inset-bottom); }
+button { font-family: inherit; }
+#app {
+  width: 100%;
+  max-width: 540px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(216, 227, 240, 0.8);
+}
+#topTitle { flex: 1; text-align: center; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
+.icon-btn {
+  width: 48px; height: 48px; border: 0; border-radius: 16px; background: #fff;
+  box-shadow: 0 4px 14px rgba(47, 128, 237, 0.12); font-size: 22px; cursor: pointer;
+  touch-action: manipulation;
+}
+.screen { flex: 1; width: 100%; padding: 14px 14px 32px; overflow-x: hidden; }
+.btn {
+  min-height: 48px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 16px;
+  background: #fff; color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer;
+  touch-action: manipulation; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn.primary {
+  color: #fff; background: var(--primary); border-color: var(--primary);
+  box-shadow: 0 8px 20px rgba(47, 128, 237, 0.25);
+}
+.btn.danger { color: var(--danger); background: #fff0f0; border-color: #ffc9c9; }
+.btn.ghost { background: var(--soft); }
+.btn.big { min-height: 56px; font-size: 18px; }
+.btn:disabled { opacity: 0.5; }
+.card {
+  padding: 14px; background: rgba(255, 255, 255, 0.94); border: 1px solid var(--line);
+  border-radius: 22px; box-shadow: 0 10px 26px rgba(47, 128, 237, 0.08);
+}
+.progress-wrap { height: 10px; overflow: hidden; background: #dbe9f8; border-radius: 999px; }
+.progress-bar {
+  height: 100%; background: linear-gradient(90deg, #2f80ed, #56ccf2);
+  border-radius: 999px; transition: width 0.25s ease;
+}
+.toast {
+  position: fixed; left: 50%; bottom: 30px; z-index: 120; max-width: 90vw; padding: 10px 16px;
+  color: #fff; background: rgba(36, 50, 74, 0.94); border-radius: 999px; text-align: center;
+  font-size: 14px; opacity: 0; pointer-events: none;
+  transform: translateX(-50%) translateY(20px); transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.modal-mask {
+  position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: rgba(24, 36, 56, 0.45); backdrop-filter: blur(3px);
+}
+.modal {
+  width: 100%; max-width: 380px; padding: 18px; background: #fff; border-radius: 22px;
+  box-shadow: 0 20px 50px rgba(20, 35, 60, 0.25);
+}
+.modal-title { margin: 0 0 8px; font-size: 19px; font-weight: 800; }
+.modal-body { color: var(--muted); font-size: 15px; line-height: 1.6; }
+.modal-actions { display: grid; gap: 10px; margin-top: 16px; }
+.hero { text-align: center; padding: 16px 8px 10px; }
+.hero-icon { font-size: 74px; line-height: 1.1; }
+.hero h1 { margin: 8px 0 6px; font-size: 30px; letter-spacing: 1px; }
+.hero p { margin: 0; color: var(--muted); font-size: 15px; }
+.home-actions { display: grid; gap: 12px; margin: 18px 0; }
+.stats-card {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 18px 0 10px;
+}
+.stats-card div {
+  padding: 12px 6px; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 18px;
+}
+.stats-card strong { display: block; color: var(--primary); font-size: 22px; }
+.stats-card span { color: var(--muted); font-size: 12px; }
+.footnote { margin: 18px 0 0; text-align: center; color: #8a9bb0; font-size: 12px; }
+.select-screen h2 { margin: 8px 0 14px; font-size: 22px; }
+.mode-card {
+  width: 100%; min-height: 92px; margin-bottom: 12px; padding: 14px; display: flex;
+  align-items: center; gap: 12px; text-align: left; background: #fff; border: 2px solid var(--line);
+  border-radius: 20px; cursor: pointer; touch-action: manipulation;
+}
+.mode-card:active { transform: scale(0.99); }
+.mode-icon { font-size: 38px; }
+.mode-card strong { display: block; font-size: 17px; margin-bottom: 4px; }
+.mode-card small { color: var(--muted); font-size: 13px; }
+.theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.theme-card {
+  min-height: 108px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px; background: #fff; border: 2px solid var(--line); border-radius: 20px;
+  cursor: pointer; touch-action: manipulation;
+}
+.theme-card.locked { opacity: 0.62; }
+.theme-icon { font-size: 34px; }
+.theme-card strong { font-size: 17px; }
+.theme-card small { color: var(--muted); font-size: 12px; }
+.game-screen { width: 100%; }
+.game-top { margin-bottom: 12px; }
+.game-meta {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px;
+  color: var(--muted); font-size: 14px; font-weight: 700;
+}
+.game-meta .stars { color: var(--star); font-size: 16px; }
+.game-meta .difficulty { padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--primary-dark); font-size: 12px; }
+.prompt { margin: 4px 0 12px; text-align: center; font-size: 17px; font-weight: 800; }
+.hint { margin: 8px 0; color: var(--muted); text-align: center; font-size: 14px; }
+.big-emoji { margin: 4px 0 8px; text-align: center; font-size: 72px; line-height: 1.1; }
+.option-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.option-btn {
+  min-height: 96px; padding: 8px; display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 2px solid #e0e9f5; border-radius: 20px; color: var(--text);
+  cursor: pointer; touch-action: manipulation; overflow: hidden;
+}
+.option-btn:active { transform: scale(0.98); }
+.image-option .emoji { font-size: 46px; line-height: 1; }
+.word-option { min-height: 60px; padding: 8px; font-size: 19px; font-weight: 800; letter-spacing: 0.3px; word-break: break-word; }
+.sentence-option { min-height: 62px; padding: 10px; font-size: 15px; font-weight: 700; line-height: 1.35; text-align: left; }
+.option-btn.disabled, .option-btn:disabled { opacity: 0.55; pointer-events: none; }
+.slots {
+  min-height: 52px; margin: 10px 0; padding: 12px; background: var(--soft); border-radius: 16px;
+  text-align: center; font-size: 26px; font-weight: 800; letter-spacing: 6px; word-break: break-word;
+}
+.letter-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.letter-btn {
+  min-height: 48px; border: 2px solid #e0e9f5; border-radius: 14px; background: #fff;
+  color: var(--text); font-size: 18px; font-weight: 800; cursor: pointer; touch-action: manipulation;
+}
+.letter-btn.used, .letter-btn:disabled { opacity: 0.3; pointer-events: none; }
+.sentence-answer {
+  min-height: 56px; margin: 10px 0; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px;
+  align-items: flex-start; background: var(--soft); border-radius: 16px;
+}
+.sentence-words { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.word-chip {
+  min-height: 48px; padding: 10px 14px; border: 2px solid #e0e9f5; border-radius: 14px;
+  background: #fff; color: var(--text); font-size: 16px; font-weight: 800; cursor: pointer;
+  touch-action: manipulation;
+}
+.word-chip.used, .word-chip:disabled { opacity: 0.3; pointer-events: none; }
+.feedback {
+  min-height: 44px; margin: 12px 0; padding: 10px 12px; border-radius: 14px; background: #eef6ff;
+  color: var(--primary-dark); font-weight: 700; opacity: 0; transition: opacity 0.2s ease;
+}
+.feedback.show { opacity: 1; }
+.feedback.ok { background: #e9f9f0; color: var(--success); }
+.game-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.result-screen { padding: 16px 12px; text-align: center; }
+.result-screen h1 { margin: 4px 0 10px; font-size: 26px; }
+.result-stars { margin: 8px 0; color: var(--star); font-size: 24px; letter-spacing: 2px; word-break: break-word; }
+.result-line { color: var(--muted); font-size: 16px; }
+.result-line strong { color: var(--primary); font-size: 22px; }
+.wrong-box { margin: 16px 0; padding: 12px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 18px; }
+.wrong-box h3 { margin: 0 0 8px; font-size: 17px; }
+.wrong-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--line); font-weight: 700; }
+.wrong-item:last-child { border-bottom: 0; }
+.emoji-sm { font-size: 24px; }
+.result-actions { display: grid; gap: 10px; margin-top: 16px; }
+.report-screen h2 { margin: 8px 0 12px; font-size: 22px; }
+.report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.report-item { padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+.report-item strong { display: block; color: var(--primary); font-size: 22px; }
+.report-item span { color: var(--muted); font-size: 12px; }
+.theme-report { margin-bottom: 14px; padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+.theme-report h3 { margin: 0 0 8px; font-size: 16px; }
+.theme-report p { margin: 4px 0; color: var(--muted); font-size: 14px; }
+@media (max-width: 360px) {
+  .screen { padding-left: 10px; padding-right: 10px; }
+  .option-grid, .theme-grid { gap: 8px; }
+  .image-option .emoji { font-size: 40px; }
+  .letter-grid { gap: 6px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <button id="btnHome" class="icon-btn" aria-label="返回首页">🏠</button>
+    <div id="topTitle">英语奇趣岛</div>
+    <button id="btnMute" class="icon-btn" aria-label="静音切换">🔊</button>
+  </header>
+  <main id="screen" class="screen"></main>
+</div>
+<div id="modalRoot"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const THEME_DATA = [
+  { id: "animals", name: "动物", icon: "🐾", items: [
+    ["cat","猫","🐱"],["dog","狗","🐶"],["pig","猪","🐷"],["cow","奶牛","🐮"],["duck","鸭子","🦆"],
+    ["fish","鱼","🐟"],["bird","鸟","🐦"],["rabbit","兔子","🐰"],["tiger","老虎","🐯"],["lion","狮子","🦁"],
+    ["monkey","猴子","🐵"],["elephant","大象","🐘"],["panda","熊猫","🐼"],["horse","马","🐴"],["sheep","绵羊","🐑"],
+    ["bear","熊","🐻"],["fox","狐狸","🦊"],["deer","鹿","🦌"],["frog","青蛙","🐸"],["snake","蛇","🐍"]
+  ]},
+  { id: "fruits", name: "水果", icon: "🍎", items: [
+    ["apple","苹果","🍎"],["banana","香蕉","🍌"],["orange","橙子","🍊"],["grape","葡萄","🍇"],["pear","梨","🍐"],
+    ["peach","桃子","🍑"],["lemon","柠檬","🍋"],["mango","芒果","🥭"],["cherry","樱桃","🍒"],["strawberry","草莓","🍓"],
+    ["watermelon","西瓜","🍉"],["pineapple","菠萝","🍍"],["coconut","椰子","🥥"],["kiwi","猕猴桃","🥝"],["tomato","西红柿","🍅"],
+    ["blueberry","蓝莓","🫐"],["melon","甜瓜","🍈"],["avocado","牛油果","🥑"],["olive","橄榄","🫒"],["chestnut","栗子","🌰"]
+  ]},
+  { id: "colors", name: "颜色", icon: "🎨", items: [
+    ["red","红色","🔴"],["blue","蓝色","🔵"],["green","绿色","🟢"],["yellow","黄色","🟡"],["orange","橙色","🟠"],
+    ["purple","紫色","🟣"],["black","黑色","⚫"],["white","白色","⚪"],["brown","棕色","🟤"],["pink","粉色","🌸"],
+    ["gray","灰色","🔘"],["gold","金色","🟨"],["silver","银色","⬜"],["cyan","青色","🧊"],["violet","紫罗兰色","💜"],
+    ["beige","米色","🟫"],["navy","藏青色","🔷"],["olive","橄榄绿","🫒"],["coral","珊瑚色","🧡"],["mint","薄荷绿","🟩"]
+  ]},
+  { id: "numbers", name: "数字", icon: "🔢", items: [
+    ["one","一","1️⃣"],["two","二","2️⃣"],["three","三","3️⃣"],["four","四","4️⃣"],["five","五","5️⃣"],
+    ["six","六","6️⃣"],["seven","七","7️⃣"],["eight","八","8️⃣"],["nine","九","9️⃣"],["ten","十","🔟"],
+    ["eleven","十一","⑪"],["twelve","十二","⑫"],["thirteen","十三","⑬"],["fourteen","十四","⑭"],["fifteen","十五","⑮"],
+    ["sixteen","十六","⑯"],["seventeen","十七","⑰"],["eighteen","十八","⑱"],["nineteen","十九","⑲"],["twenty","二十","⑳"]
+  ]},
+  { id: "body", name: "身体", icon: "🙂", items: [
+    ["eye","眼睛","👁️"],["ear","耳朵","👂"],["nose","鼻子","👃"],["mouth","嘴巴","👄"],["hand","手","✋"],
+    ["foot","脚","🦶"],["leg","腿","🦵"],["arm","手臂","💪"],["head","头","🙂"],["hair","头发","💇"],
+    ["tooth","牙齿","🦷"],["tongue","舌头","👅"],["finger","手指","👆"],["neck","脖子","🧣"],["face","脸","😊"],
+    ["knee","膝盖","🦿"],["shoulder","肩膀","🤷"],["back","背","🔙"],["stomach","肚子","🫃"],["elbow","手肘","🦾"]
+  ]},
+  { id: "family", name: "家庭", icon: "👨‍👩‍👧‍👦", items: [
+    ["father","爸爸","👨"],["mother","妈妈","👩"],["brother","哥哥/弟弟","👦"],["sister","姐姐/妹妹","👧"],["baby","宝宝","👶"],
+    ["grandpa","爷爷","👴"],["grandma","奶奶","👵"],["uncle","叔叔","🧔"],["aunt","阿姨","👩‍🦱"],["cousin","表亲","🧑"],
+    ["son","儿子","🧒"],["daughter","女儿","👧"],["family","家庭","👨‍👩‍👧‍👦"],["parents","父母","👫"],["friend","朋友","🤝"],
+    ["boy","男孩","👦"],["girl","女孩","👧"],["man","男人","👨"],["woman","女人","👩"],["child","孩子","🧒"]
+  ]},
+  { id: "school", name: "学校", icon: "🏫", items: [
+    ["book","书","📖"],["pen","钢笔","🖊️"],["pencil","铅笔","✏️"],["ruler","尺子","📏"],["eraser","橡皮","🧽"],
+    ["bag","书包","🎒"],["desk","课桌","🪑"],["chair","椅子","💺"],["teacher","老师","👩‍🏫"],["student","学生","🧑‍🎓"],
+    ["school","学校","🏫"],["class","班级","📚"],["blackboard","黑板","⬛"],["notebook","笔记本","📓"],["crayon","蜡笔","🖍️"],
+    ["glue","胶水","🧴"],["scissors","剪刀","✂️"],["library","图书馆","📚"],["playground","操场","🛝"],["homework","作业","📝"]
+  ]},
+  { id: "food", name: "食物", icon: "🍚", items: [
+    ["rice","米饭","🍚"],["bread","面包","🍞"],["milk","牛奶","🥛"],["egg","鸡蛋","🥚"],["cake","蛋糕","🍰"],
+    ["noodle","面条","🍜"],["soup","汤","🍲"],["meat","肉","🍖"],["chicken","鸡肉","🍗"],["cheese","奶酪","🧀"],
+    ["juice","果汁","🧃"],["water","水","💧"],["tea","茶","🍵"],["coffee","咖啡","☕"],["candy","糖果","🍬"],
+    ["cookie","饼干","🍪"],["pizza","披萨","🍕"],["hamburger","汉堡","🍔"],["sandwich","三明治","🥪"],["salad","沙拉","🥗"]
+  ]}
+];
+const THEMES = THEME_DATA.map((theme) => ({
+  id: theme.id, name: theme.name, icon: theme.icon,
+  words: theme.items.map(([word, zh, emoji]) => ({ id: theme.id + "-" + word, theme: theme.id, word, zh, emoji }))
+}));
+const ALL_WORDS = THEMES.flatMap((theme) => theme.words);
+const WORD_MAP = Object.fromEntries(ALL_WORDS.map((word) => [word.id, word]));
+function getTheme(themeId) { return THEMES.find((theme) => theme.id === themeId); }
+function getWord(wordId) { return WORD_MAP[wordId]; }
+function getThemeIndex(themeId) { return THEMES.findIndex((theme) => theme.id === themeId); }
+function shuffle(list) {
+  const arr = [...list];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function sample(list, count) { return shuffle(list).slice(0, count); }
+
+const SENTENCE_DATA = [
+  { id: "s-animals-1", theme: "animals", words: ["I","see","a","cat"], zh: "我看见一只猫", emoji: "🐱" },
+  { id: "s-animals-2", theme: "animals", words: ["The","dog","is","big"], zh: "这只狗很大", emoji: "🐶" },
+  { id: "s-animals-3", theme: "animals", words: ["Birds","can","fly"], zh: "鸟会飞", emoji: "🐦" },
+  { id: "s-animals-4", theme: "animals", words: ["My","rabbit","is","white"], zh: "我的兔子是白色的", emoji: "🐰" },
+  { id: "s-animals-5", theme: "animals", words: ["The","lion","is","strong"], zh: "狮子很强壮", emoji: "🦁" },
+  { id: "s-fruits-1", theme: "fruits", words: ["I","like","apples"], zh: "我喜欢苹果", emoji: "🍎" },
+  { id: "s-fruits-2", theme: "fruits", words: ["The","banana","is","yellow"], zh: "香蕉是黄色的", emoji: "🍌" },
+  { id: "s-fruits-3", theme: "fruits", words: ["This","orange","is","sweet"], zh: "这个橙子很甜", emoji: "🍊" },
+  { id: "s-fruits-4", theme: "fruits", words: ["I","eat","a","pear"], zh: "我吃一个梨", emoji: "🍐" },
+  { id: "s-colors-1", theme: "colors", words: ["The","sky","is","blue"], zh: "天空是蓝色的", emoji: "🔵" },
+  { id: "s-colors-2", theme: "colors", words: ["I","have","a","red","ball"], zh: "我有一个红球", emoji: "🔴" },
+  { id: "s-colors-3", theme: "colors", words: ["Green","means","go"], zh: "绿色表示通行", emoji: "🟢" },
+  { id: "s-colors-4", theme: "colors", words: ["Her","dress","is","pink"], zh: "她的裙子是粉色的", emoji: "🌸" },
+  { id: "s-numbers-1", theme: "numbers", words: ["I","have","two","hands"], zh: "我有两只手", emoji: "✋" },
+  { id: "s-numbers-2", theme: "numbers", words: ["There","are","five","birds"], zh: "有五只鸟", emoji: "🐦" },
+  { id: "s-numbers-3", theme: "numbers", words: ["Count","to","ten"], zh: "数到十", emoji: "🔟" },
+  { id: "s-numbers-4", theme: "numbers", words: ["I","am","eight","years","old"], zh: "我八岁了", emoji: "8️⃣" },
+  { id: "s-body-1", theme: "body", words: ["I","wash","my","hands"], zh: "我洗手", emoji: "✋" },
+  { id: "s-body-2", theme: "body", words: ["My","eyes","are","black"], zh: "我的眼睛是黑色的", emoji: "👁️" },
+  { id: "s-body-3", theme: "body", words: ["Touch","your","nose"], zh: "摸摸你的鼻子", emoji: "👃" },
+  { id: "s-body-4", theme: "body", words: ["She","has","long","hair"], zh: "她有长头发", emoji: "💇" },
+  { id: "s-family-1", theme: "family", words: ["She","is","my","sister"], zh: "她是我的妹妹", emoji: "👧" },
+  { id: "s-family-2", theme: "family", words: ["He","is","my","father"], zh: "他是我的爸爸", emoji: "👨" },
+  { id: "s-family-3", theme: "family", words: ["I","love","my","family"], zh: "我爱我的家人", emoji: "👨‍👩‍👧‍👦" },
+  { id: "s-family-4", theme: "family", words: ["My","mother","is","kind"], zh: "我妈妈很善良", emoji: "👩" },
+  { id: "s-family-5", theme: "family", words: ["We","are","good","friends"], zh: "我们是好朋友", emoji: "🤝" },
+  { id: "s-school-1", theme: "school", words: ["Open","your","book"], zh: "打开你的书", emoji: "📖" },
+  { id: "s-school-2", theme: "school", words: ["This","is","my","pen"], zh: "这是我的钢笔", emoji: "🖊️" },
+  { id: "s-school-3", theme: "school", words: ["I","go","to","school"], zh: "我去上学", emoji: "🏫" },
+  { id: "s-school-4", theme: "school", words: ["Sit","down","please"], zh: "请坐下", emoji: "🧎" },
+  { id: "s-food-1", theme: "food", words: ["I","drink","milk"], zh: "我喝牛奶", emoji: "🥛" },
+  { id: "s-food-2", theme: "food", words: ["The","cake","is","sweet"], zh: "蛋糕很甜", emoji: "🍰" },
+  { id: "s-food-3", theme: "food", words: ["I","want","some","water"], zh: "我想要一些水", emoji: "💧" },
+  { id: "s-food-4", theme: "food", words: ["Let","us","eat","rice"], zh: "我们吃米饭吧", emoji: "🍚" }
+];
+function getSentencesByTheme(themeId) { return SENTENCE_DATA.filter((item) => item.theme === themeId); }
+function getAllSentences() { return SENTENCE_DATA.slice(); }
+function getSentence(sentenceId) { return SENTENCE_DATA.find((item) => item.id === sentenceId); }
+
+const Store = (function () {
+  const PREFIX = "kei_pro_";
+  function read(key, fallback) {
+    try {
+      const raw = localStorage.getItem(PREFIX + key);
+      if (raw === null) return fallback;
+      return JSON.parse(raw);
+    } catch (error) { return fallback; }
+  }
+  function write(key, value) {
+    try { localStorage.setItem(PREFIX + key, JSON.stringify(value)); return true; }
+    catch (error) { return false; }
+  }
+  function remove(key) { try { localStorage.removeItem(PREFIX + key); } catch (error) {} }
+  function clearAll() {
+    try {
+      Object.keys(localStorage).filter((key) => key.startsWith(PREFIX)).forEach((key) => localStorage.removeItem(key));
+    } catch (error) {}
+  }
+  return { read, write, remove, clearAll };
+})();
+
+const AudioManager = (function () {
+  const MUTE_KEY = "audio_muted";
+  let muted = Store.read(MUTE_KEY, false) === true;
+  function setMuted(value) {
+    muted = Boolean(value);
+    Store.write(MUTE_KEY, muted);
+    if (muted && "speechSynthesis" in window) window.speechSynthesis.cancel();
+  }
+  function toggle() { setMuted(!muted); return muted; }
+  function isMuted() { return muted; }
+  function speak(text, options) {
+    if (muted) return false;
+    if (!("speechSynthesis" in window)) {
+      if (window.showToast) window.showToast("当前浏览器不支持语音，请看文字提示");
+      return false;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = (options && options.rate) || 0.82;
+      utterance.pitch = 1.05;
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
+      return true;
+    } catch (error) { return false; }
+  }
+  function speakSentence(words) { return speak(words.join(" "), { rate: 0.78 }); }
+  function playCorrect() { if (!muted) speak("Great job"); }
+  function playWrong() { if (!muted) speak("Try again"); }
+  return { speak, speakSentence, setMuted, toggle, isMuted, playCorrect, playWrong };
+})();
+
+const DifficultyManager = (function () {
+  const KEY = "difficulty_state_v1";
+  const DEFAULT_STATE = {
+    basic: { level: 1, streakCorrect: 0, streakWrong: 0, adaptive: false },
+    advanced: { level: 2, streakCorrect: 0, streakWrong: 0, adaptive: true },
+    expert: { level: 2, streakCorrect: 0, streakWrong: 0, adaptive: true }
+  };
+  const CONFIG = {
+    1: { name: "轻松", imageOptions: 2, matchOptions: 3, spellShowFirstLetter: true, hintOpenByDefault: true, sentenceShowZh: true },
+    2: { name: "适中", imageOptions: 3, matchOptions: 4, spellShowFirstLetter: false, hintOpenByDefault: false, sentenceShowZh: true },
+    3: { name: "挑战", imageOptions: 4, matchOptions: 4, spellShowFirstLetter: false, hintOpenByDefault: false, sentenceShowZh: false }
+  };
+  function normalize(state) {
+    const result = {};
+    ["basic", "advanced", "expert"].forEach((group) => {
+      const base = DEFAULT_STATE[group];
+      const saved = state && state[group] ? state[group] : {};
+      result[group] = {
+        level: Math.min(3, Math.max(1, Number(saved.level) || base.level)),
+        streakCorrect: Math.max(0, Number(saved.streakCorrect) || 0),
+        streakWrong: Math.max(0, Number(saved.streakWrong) || 0),
+        adaptive: saved.adaptive === undefined ? base.adaptive : Boolean(saved.adaptive)
+      };
+    });
+    return result;
+  }
+  let state = normalize(Store.read(KEY, null));
+  function persist() { Store.write(KEY, state); }
+  function getConfig(ageGroup) {
+    const item = state[ageGroup] || DEFAULT_STATE.advanced;
+    return CONFIG[item.level];
+  }
+  function getLevel(ageGroup) { return (state[ageGroup] || DEFAULT_STATE.advanced).level; }
+  function getState(ageGroup) { return { ...(state[ageGroup] || DEFAULT_STATE.advanced) }; }
+  function record(ageGroup, correct) {
+    const item = state[ageGroup];
+    if (!item || !item.adaptive) return { level: item ? item.level : 1, changed: false, direction: 0 };
+    let changed = false;
+    let direction = 0;
+    if (correct) {
+      item.streakCorrect += 1;
+      item.streakWrong = 0;
+      if (item.streakCorrect >= 2 && item.level < 3) { item.level += 1; item.streakCorrect = 0; changed = true; direction = 1; }
+    } else {
+      item.streakWrong += 1;
+      item.streakCorrect = 0;
+      if (item.streakWrong >= 2 && item.level > 1) { item.level -= 1; item.streakWrong = 0; changed = true; direction = -1; }
+    }
+    persist();
+    return { level: item.level, changed, direction };
+  }
+  function reset() { state = normalize(null); persist(); }
+  return { getConfig, getLevel, getState, record, reset, CONFIG };
+})();
+
+const ProgressStore = (function () {
+  const KEY = "learning_progress_v1";
+  const DEFAULT_STATE = { rounds: 0, totalAnswered: 0, totalCorrect: 0, themes: {}, words: {}, wrong: {}, unlocked: ["animals"] };
+  let cache = null;
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function load() {
+    if (cache) return cache;
+    const saved = Store.read(KEY, null);
+    cache = { ...clone(DEFAULT_STATE), ...(saved || {}) };
+    if (!Array.isArray(cache.unlocked) || cache.unlocked.length === 0) cache.unlocked = ["animals"];
+    if (!cache.themes || typeof cache.themes !== "object") cache.themes = {};
+    if (!cache.words || typeof cache.words !== "object") cache.words = {};
+    if (!cache.wrong || typeof cache.wrong !== "object") cache.wrong = {};
+    return cache;
+  }
+  function save() { Store.write(KEY, cache); }
+  function isUnlocked(themeId) { return load().unlocked.includes(themeId); }
+  function getBest(themeId) { const item = load().themes[themeId]; return item ? item.bestStars || 0 : 0; }
+  function unlockNext(themeId) {
+    const index = getThemeIndex(themeId);
+    if (index < 0 || index >= THEMES.length - 1) return null;
+    const nextId = THEMES[index + 1].id;
+    if (!load().unlocked.includes(nextId)) { load().unlocked.push(nextId); save(); return nextId; }
+    return null;
+  }
+  function recordAnswer(wordId, correct) {
+    const state = load();
+    state.totalAnswered += 1;
+    if (correct) state.totalCorrect += 1;
+    if (wordId) {
+      const item = state.words[wordId] || { correct: 0, wrong: 0, last: 0 };
+      if (correct) item.correct += 1; else item.wrong += 1;
+      item.last = Date.now();
+      state.words[wordId] = item;
+      if (correct) { delete state.wrong[wordId]; }
+      else {
+        const wrongItem = state.wrong[wordId] || { count: 0, last: 0 };
+        wrongItem.count += 1;
+        wrongItem.last = Date.now();
+        state.wrong[wordId] = wrongItem;
+      }
+    }
+    save();
+  }
+  function recordRound(themeId, stars, total) {
+    const state = load();
+    state.rounds += 1;
+    const item = state.themes[themeId] || { plays: 0, bestStars: 0, correct: 0, total: 0 };
+    item.plays += 1;
+    item.bestStars = Math.max(item.bestStars || 0, stars);
+    item.total += total;
+    item.correct += stars;
+    state.themes[themeId] = item;
+    if (stars >= 6) unlockNext(themeId);
+    save();
+  }
+  function getWrongWordIds() { return Object.keys(load().wrong); }
+  function getWrongWords() { return getWrongWordIds().map(getWord).filter(Boolean); }
+  function isMastered(wordId) {
+    const item = load().words[wordId];
+    return Boolean(item && item.correct >= 2 && item.correct > item.wrong);
+  }
+  function getMasteredCount() { return Object.keys(load().words).filter((wordId) => isMastered(wordId)).length; }
+  function getStats() {
+    const state = load();
+    const accuracy = state.totalAnswered ? Math.round((state.totalCorrect / state.totalAnswered) * 100) : 0;
+    return {
+      rounds: state.rounds, totalAnswered: state.totalAnswered, totalCorrect: state.totalCorrect,
+      accuracy, unlocked: state.unlocked.length, mastered: getMasteredCount(), wrongCount: Object.keys(state.wrong).length
+    };
+  }
+  function getThemeStats() {
+    const state = load();
+    return THEMES.map((theme) => {
+      const item = state.themes[theme.id] || { plays: 0, bestStars: 0, correct: 0, total: 0 };
+      return {
+        themeId: theme.id, name: theme.name, icon: theme.icon, plays: item.plays || 0,
+        bestStars: item.bestStars || 0,
+        accuracy: item.total ? Math.round((item.correct / item.total) * 100) : 0,
+        mastered: theme.words.filter((word) => isMastered(word.id)).length,
+        totalWords: theme.words.length
+      };
+    });
+  }
+  function reset() { cache = clone(DEFAULT_STATE); save(); }
+  return { isUnlocked, getBest, unlockNext, recordAnswer, recordRound, getWrongWordIds, getWrongWords, isMastered, getMasteredCount, getStats, getThemeStats, reset };
+})();
+
+window.showToast = function (message) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.classList.remove("show"); }, 1800);
+};
+
+const UI = (function () {
+  function openModal(options) {
+    const root = document.getElementById("modalRoot");
+    const mask = document.createElement("div");
+    mask.className = "modal-mask";
+    mask.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <h2 class="modal-title">${options.title || "提示"}</h2>
+        <div class="modal-body">${options.body || ""}</div>
+        <div class="modal-actions">
+          ${(options.actions || []).map((action, index) =>
+            `<button class="btn ${action.className || ""}" data-modal-action="${index}">${action.label}</button>`
+          ).join("")}
+        </div>
+      </div>`;
+    root.appendChild(mask);
+    function close() { if (mask.parentNode) mask.parentNode.removeChild(mask); }
+    mask.querySelectorAll("[data-modal-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const action = options.actions[Number(button.dataset.modalAction)];
+        close();
+        if (action && typeof action.onClick === "function") action.onClick();
+      });
+    });
+    return { close };
+  }
+  function confirmDialog(options) {
+    return new Promise((resolve) => {
+      openModal({
+        title: options.title || "确认",
+        body: options.body || "",
+        actions: [
+          { label: options.cancelText || "取消", className: "ghost", onClick: () => resolve(false) },
+          { label: options.confirmText || "确定", className: options.danger ? "danger" : "primary", onClick: () => resolve(true) }
+        ]
+      });
+    });
+  }
+  function starsText(stars, total) { return "⭐".repeat(stars) + "☆".repeat(Math.max(0, total - stars)); }
+  return { openModal, confirmDialog, starsText };
+})();
+
+const QuestionFactory = (function () {
+  function makeSeedList(themeId, ageGroup, reviewWordIds) {
+    const isReview = Array.isArray(reviewWordIds) && reviewWordIds.length > 0;
+    let wordPool = [];
+    if (isReview) {
+      wordPool = reviewWordIds.map(getWord).filter(Boolean);
+    } else {
+      const theme = getTheme(themeId);
+      wordPool = theme ? theme.words.slice() : [];
+    }
+    if (wordPool.length === 0) return [];
+    const types = isReview ? ["listen", "match", "spell"] : pickTypes(ageGroup);
+    const seeds = [];
+    const maxCount = isReview ? Math.min(10, wordPool.length) : 10;
+    const shuffledWords = shuffle(wordPool);
+    let wordIndex = 0;
+    for (let i = 0; i < maxCount; i += 1) {
+      const type = types[i % types.length];
+      if (type === "listen" || type === "match" || type === "spell") {
+        const word = shuffledWords[wordIndex % shuffledWords.length];
+        wordIndex += 1;
+        seeds.push({ type, word });
+      } else {
+        const sentence = pickSentence(themeId, isReview);
+        if (sentence) {
+          seeds.push({ type: i % 2 === 0 ? "sentence-order" : "sentence-choice", sentence });
+        } else {
+          const word = shuffledWords[wordIndex % shuffledWords.length];
+          wordIndex += 1;
+          seeds.push({ type: "listen", word });
+        }
+      }
+    }
+    return seeds;
+  }
+  function pickTypes(ageGroup) {
+    if (ageGroup === "basic") return ["listen"];
+    if (ageGroup === "advanced") return ["listen", "listen", "match", "spell", "listen", "match", "spell", "listen", "match", "spell"];
+    return ["listen", "match", "spell", "sentence-order", "listen", "match", "spell", "sentence-choice", "listen", "match"];
+  }
+  function pickSentence(themeId, isReview) {
+    let pool = getSentencesByTheme(themeId);
+    if (pool.length === 0 || isReview) pool = getAllSentences();
+    if (pool.length === 0) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  function hydrate(seed, difficulty) {
+    const config = DifficultyManager.CONFIG[difficulty] || DifficultyManager.CONFIG[2];
+    if (seed.type === "listen") return hydrateListen(seed.word, config);
+    if (seed.type === "match") return hydrateMatch(seed.word, config);
+    if (seed.type === "spell") return hydrateSpell(seed.word, config);
+    if (seed.type === "sentence-order") return hydrateSentenceOrder(seed.sentence, config);
+    return hydrateSentenceChoice(seed.sentence, config);
+  }
+  function makeWordOptions(word, count) {
+    const sameTheme = ALL_WORDS.filter((item) => item.id !== word.id && item.theme === word.theme);
+    const otherTheme = ALL_WORDS.filter((item) => item.id !== word.id && item.theme !== word.theme);
+    const options = [word];
+    const candidates = shuffle([...sameTheme, ...otherTheme]);
+    for (const item of candidates) {
+      if (options.length >= count) break;
+      if (!options.some((option) => option.id === item.id)) options.push(item);
+    }
+    return shuffle(options);
+  }
+  function hydrateListen(word, config) {
+    return { type: "listen", word, options: makeWordOptions(word, config.imageOptions), solved: false, revealed: false, wrongMarked: false, spoken: false, hintShown: config.hintOpenByDefault };
+  }
+  function hydrateMatch(word, config) {
+    return { type: "match", word, options: makeWordOptions(word, config.matchOptions), solved: false, revealed: false, wrongMarked: false, hintShown: config.hintOpenByDefault };
+  }
+  function hydrateSpell(word, config) {
+    const letters = word.word.split("").map((ch, index) => ({ ch, index }));
+    return { type: "spell", word, letters: shuffle(letters), picked: [], used: [], solved: false, revealed: false, wrongMarked: false, hintShown: config.hintOpenByDefault, showFirstLetter: config.spellShowFirstLetter };
+  }
+  function hydrateSentenceOrder(sentence, config) {
+    const indices = sentence.words.map((_, index) => index);
+    return { type: "sentence-order", sentence, order: shuffle(indices), picked: [], solved: false, revealed: false, wrongMarked: false, hintShown: config.hintOpenByDefault, showZh: config.sentenceShowZh };
+  }
+  function hydrateSentenceChoice(sentence, config) {
+    const others = shuffle(getAllSentences().filter((item) => item.id !== sentence.id)).slice(0, 3);
+    return { type: "sentence-choice", sentence, options: shuffle([sentence, ...others]), solved: false, revealed: false, wrongMarked: false, hintShown: config.hintOpenByDefault, showZh: config.sentenceShowZh };
+  }
+  return { makeSeedList, hydrate };
+})();
+
+const Game = (function () {
+  let state = null;
+  function screenEl() { return document.getElementById("screen"); }
+  function isRunning() { return Boolean(state); }
+  function stop() { state = null; }
+  function start(options) {
+    const ageGroup = options.ageGroup || "basic";
+    const reviewWordIds = options.reviewWordIds || null;
+    const themeId = options.themeId || (reviewWordIds ? "review" : "animals");
+    const seeds = QuestionFactory.makeSeedList(themeId, ageGroup, reviewWordIds);
+    if (seeds.length === 0) { window.showToast("没有可用的题目"); return; }
+    state = {
+      ageGroup, themeId, mode: reviewWordIds ? "review" : "normal", seeds, index: 0, stars: 0,
+      wrongThisRound: [], feedback: "", feedbackOk: false,
+      difficulty: DifficultyManager.getLevel(ageGroup), paused: false, finished: false, resultSaved: false
+    };
+    if (window.App && window.App.setTopTitle) window.App.setTopTitle("答题中");
+    render();
+  }
+  function currentSeed() { return state ? state.seeds[state.index] : null; }
+  function ensureQuestion(seed) {
+    if (!seed) return null;
+    if (!seed.question) seed.question = QuestionFactory.hydrate(seed, state.difficulty);
+    return seed.question;
+  }
+  function render() {
+    if (!state) return;
+    if (state.index >= state.seeds.length) { renderResult(); return; }
+    const seed = currentSeed();
+    const question = ensureQuestion(seed);
+    const progress = Math.round((state.index / state.seeds.length) * 100);
+    const difficultyName = DifficultyManager.CONFIG[state.difficulty].name;
+    const hintText = question.hintShown ? getHint(question) : "";
+    let body = "";
+    if (question.type === "listen") body = renderListen(question, hintText);
+    else if (question.type === "match") body = renderMatch(question, hintText);
+    else if (question.type === "spell") body = renderSpell(question, hintText);
+    else if (question.type === "sentence-order") body = renderSentenceOrder(question, hintText);
+    else body = renderSentenceChoice(question, hintText);
+    screenEl().innerHTML = `
+      <section class="game-screen">
+        <div class="game-top">
+          <div class="progress-wrap"><div class="progress-bar" style="width:${progress}%"></div></div>
+          <div class="game-meta">
+            <span>第 ${state.index + 1}/${state.seeds.length} 题</span>
+            <span class="difficulty">难度 ${state.difficulty} · ${difficultyName}</span>
+            <span class="stars">⭐ ${state.stars}</span>
+          </div>
+        </div>
+        ${body}
+        <div class="feedback ${state.feedback ? "show" : ""} ${state.feedbackOk ? "ok" : ""}">${state.feedback}</div>
+        <div class="game-actions">
+          <button class="btn" data-action="hint">💡 提示</button>
+          <button class="btn" data-action="answer">👀 查看答案</button>
+          ${question.solved ? '<button class="btn primary" data-action="next">下一题 ➡️</button>' : ""}
+          <button class="btn" data-action="pause">⏸ 暂停</button>
+          <button class="btn danger" data-action="exit">退出</button>
+        </div>
+      </section>`;
+    bindEvents(question);
+    if (question.type === "listen" && !question.spoken) {
+      question.spoken = true;
+      setTimeout(() => AudioManager.speak(question.word.word), 120);
+    }
+  }
+  function renderListen(question, hintText) {
+    return `<div class="card">
+      <p class="prompt">请听发音，点出正确的图片</p>
+      <div style="text-align:center"><button class="btn primary" data-action="replay">🔊 再听一次</button></div>
+      ${hintText ? `<p class="hint">提示：${hintText}</p>` : ""}
+      <div class="option-grid">
+        ${question.options.map((item) => `
+          <button class="option-btn image-option ${question.solved ? "disabled" : ""}" data-answer="${item.id}" ${question.solved ? "disabled" : ""}>
+            <span class="emoji">${item.emoji}</span>
+          </button>`).join("")}
+      </div></div>`;
+  }
+  function renderMatch(question, hintText) {
+    return `<div class="card">
+      <div class="big-emoji">${question.word.emoji}</div>
+      <p class="prompt">选择正确的英文单词</p>
+      ${hintText ? `<p class="hint">提示：${hintText}</p>` : ""}
+      <div class="option-grid">
+        ${question.options.map((item) => `
+          <button class="option-btn word-option ${question.solved ? "disabled" : ""}" data-answer="${item.id}" ${question.solved ? "disabled" : ""}>
+            ${item.word}
+          </button>`).join("")}
+      </div></div>`;
+  }
+  function renderSpell(question, hintText) {
+    const slots = question.word.word.split("").map((ch, index) => {
+      if (question.picked[index]) return question.picked[index].toUpperCase();
+      if (index === 0 && question.showFirstLetter && !question.solved) return question.word.word[0].toUpperCase();
+      return "_";
+    }).join(" ");
+    return `<div class="card">
+      <div class="big-emoji">${question.word.emoji}</div>
+      <p class="prompt">按顺序点字母，拼出单词</p>
+      <div class="slots">${slots}</div>
+      ${hintText ? `<p class="hint">提示：${hintText}</p>` : ""}
+      <div class="letter-grid">
+        ${question.letters.map((item, index) => `
+          <button class="letter-btn ${question.used.includes(index) ? "used" : ""}" data-letter-idx="${index}" ${question.used.includes(index) || question.solved ? "disabled" : ""}>
+            ${item.ch.toUpperCase()}
+          </button>`).join("")}
+      </div></div>`;
+  }
+  function renderSentenceOrder(question, hintText) {
+    const pickedText = question.picked.map((index) => question.sentence.words[index]).join(" ");
+    const showZh = question.showZh || question.hintShown;
+    return `<div class="card">
+      <div class="big-emoji">${question.sentence.emoji}</div>
+      <p class="prompt">按顺序点单词，组成正确的句子</p>
+      ${showZh ? `<p class="hint">中文：${question.sentence.zh}</p>` : ""}
+      ${hintText ? `<p class="hint">提示：${hintText}</p>` : ""}
+      <div class="sentence-answer">${pickedText || '<span class="hint">点击下方单词开始</span>'}</div>
+      <div class="sentence-words">
+        ${question.order.map((index) => {
+          const used = question.picked.includes(index);
+          return `<button class="word-chip ${used ? "used" : ""}" data-word-idx="${index}" ${used || question.solved ? "disabled" : ""}>${question.sentence.words[index]}</button>`;
+        }).join("")}
+      </div>
+      <div class="game-actions" style="margin-top:12px">
+        <button class="btn ghost" data-action="undo">↩️ 撤回</button>
+        <button class="btn primary" data-action="submit-sentence">✅ 提交</button>
+      </div></div>`;
+  }
+  function renderSentenceChoice(question, hintText) {
+    const showZh = question.showZh || question.hintShown;
+    return `<div class="card">
+      <div class="big-emoji">${question.sentence.emoji}</div>
+      <p class="prompt">选出正确的英文句子</p>
+      ${showZh ? `<p class="hint">情境：${question.sentence.zh}</p>` : ""}
+      ${hintText ? `<p class="hint">提示：${hintText}</p>` : ""}
+      <div class="option-grid" style="grid-template-columns:1fr">
+        ${question.options.map((item) => `
+          <button class="option-btn sentence-option ${question.solved ? "disabled" : ""}" data-sentence-id="${item.id}" ${question.solved ? "disabled" : ""}>
+            ${item.words.join(" ")}
+          </button>`).join("")}
+      </div></div>`;
+  }
+  function getHint(question) {
+    if (question.type === "listen") return question.word.zh;
+    if (question.type === "match") return "首字母是 " + question.word.word[0].toUpperCase();
+    if (question.type === "spell") return "首字母是 " + question.word.word[0].toUpperCase() + "，共 " + question.word.word.length + " 个字母";
+    if (question.type === "sentence-order") return "第一个词是 " + question.sentence.words[0];
+    return "看 emoji 和中文情境";
+  }
+  function bindEvents(question) {
+    screenEl().querySelectorAll("[data-answer]").forEach((button) => {
+      button.addEventListener("click", () => handleChoice(question, button.dataset.answer));
+    });
+    screenEl().querySelectorAll("[data-sentence-id]").forEach((button) => {
+      button.addEventListener("click", () => handleSentenceChoice(question, button.dataset.sentenceId));
+    });
+    screenEl().querySelectorAll("[data-letter-idx]").forEach((button) => {
+      button.addEventListener("click", () => handleLetter(question, Number(button.dataset.letterIdx)));
+    });
+    screenEl().querySelectorAll("[data-word-idx]").forEach((button) => {
+      button.addEventListener("click", () => handleOrderWord(question, Number(button.dataset.wordIdx)));
+    });
+    screenEl().querySelectorAll("[data-action]").forEach((button) => {
+      button.addEventListener("click", () => handleAction(question, button.dataset.action));
+    });
+  }
+  function handleAction(question, action) {
+    if (action === "replay") {
+      if (question.word) AudioManager.speak(question.word.word);
+      else if (question.sentence) AudioManager.speakSentence(question.sentence.words);
+      return;
+    }
+    if (action === "hint") { question.hintShown = true; render(); return; }
+    if (action === "answer") { revealAnswer(question); return; }
+    if (action === "next") { nextQuestion(); return; }
+    if (action === "undo") {
+      if (question.picked && question.picked.length > 0) { question.picked.pop(); state.feedback = ""; render(); }
+      return;
+    }
+    if (action === "submit-sentence") { submitSentenceOrder(question); return; }
+    if (action === "pause") { pauseGame(); return; }
+    if (action === "exit") { exitGame(); }
+  }
+  function pauseGame() {
+    state.paused = true;
+    UI.openModal({
+      title: "已暂停",
+      body: "休息一下，继续收集小星星吧。",
+      actions: [
+        { label: "继续游戏", className: "primary", onClick: () => { state.paused = false; } },
+        { label: "退出关卡", className: "danger", onClick: () => exitGame() }
+      ]
+    });
+  }
+  async function exitGame() {
+    const ageGroup = state ? state.ageGroup : "basic";
+    const ok = await UI.confirmDialog({
+      title: "退出关卡",
+      body: "退出后本关进度不会保存，确定退出吗？",
+      confirmText: "退出",
+      cancelText: "继续答题",
+      danger: true
+    });
+    if (ok) { stop(); if (window.App) window.App.goThemeSelect(ageGroup); }
+  }
+  function handleChoice(question, answerId) {
+    if (question.solved) return;
+    if (answerId === question.word.id) onCorrect(question);
+    else onWrong(question);
+    render();
+  }
+  function handleSentenceChoice(question, sentenceId) {
+    if (question.solved) return;
+    if (sentenceId === question.sentence.id) {
+      question.solved = true;
+      state.stars += 1;
+      state.feedback = "太棒了！+1⭐";
+      state.feedbackOk = true;
+      AudioManager.playCorrect();
+      ProgressStore.recordAnswer(null, true);
+      updateDifficulty(true);
+    } else {
+      markWrongSentence(question);
+      state.feedback = "再试一次，看看中文情境。";
+      state.feedbackOk = false;
+      AudioManager.playWrong();
+      ProgressStore.recordAnswer(null, false);
+      updateDifficulty(false);
+    }
+    render();
+  }
+  function handleLetter(question, letterIndex) {
+    if (question.solved) return;
+    const item = question.letters[letterIndex];
+    if (!item || question.used.includes(letterIndex)) return;
+    const expected = question.word.word[question.picked.length];
+    if (item.ch === expected) {
+      question.picked.push(item.ch);
+      question.used.push(letterIndex);
+      if (question.picked.length === question.word.word.length) onCorrect(question);
+      else { state.feedback = "很好，继续！"; state.feedbackOk = true; render(); }
+    } else {
+      onWrong(question);
+      state.feedback = "字母不对，再试试。下一个字母是 " + expected.toUpperCase();
+      render();
+    }
+  }
+  function handleOrderWord(question, wordIndex) {
+    if (question.solved) return;
+    if (question.picked.includes(wordIndex)) return;
+    question.picked.push(wordIndex);
+    state.feedback = "";
+    render();
+  }
+  function submitSentenceOrder(question) {
+    if (question.solved) return;
+    if (question.picked.length !== question.sentence.words.length) {
+      state.feedback = "还有单词没选完，继续点。";
+      state.feedbackOk = false;
+      render();
+      return;
+    }
+    const correct = question.picked.every((value, index) => value === index);
+    if (correct) onCorrect(question);
+    else { onWrong(question); state.feedback = "顺序不对，再试一次。"; render(); }
+  }
+  function onCorrect(question) {
+    question.solved = true;
+    state.stars += 1;
+    state.feedback = "太棒了！+1⭐";
+    state.feedbackOk = true;
+    AudioManager.playCorrect();
+    if (question.word) ProgressStore.recordAnswer(question.word.id, true);
+    else ProgressStore.recordAnswer(null, true);
+    updateDifficulty(true);
+  }
+  function onWrong(question) {
+    markWrong(question);
+    state.feedback = "再试一次，可以点提示或再听一次。";
+    state.feedbackOk = false;
+    AudioManager.playWrong();
+    if (question.word) ProgressStore.recordAnswer(question.word.id, false);
+    else ProgressStore.recordAnswer(null, false);
+    updateDifficulty(false);
+  }
+  function markWrong(question) {
+    if (question.wrongMarked) return;
+    question.wrongMarked = true;
+    if (question.word) state.wrongThisRound.push(question.word.id);
+  }
+  function markWrongSentence(question) {
+    if (question.wrongMarked) return;
+    question.wrongMarked = true;
+  }
+  function updateDifficulty(correct) {
+    const result = DifficultyManager.record(state.ageGroup, correct);
+    if (result.changed) {
+      state.difficulty = result.level;
+      state.feedback += result.direction > 0 ? " 难度提升！" : " 难度降低，继续加油。";
+    }
+  }
+  function revealAnswer(question) {
+    if (question.solved) return;
+    markWrong(question);
+    question.revealed = true;
+    question.solved = true;
+    if (question.type === "spell") question.picked = question.word.word.split("");
+    if (question.type === "sentence-order") question.picked = question.sentence.words.map((_, index) => index);
+    state.feedback = question.word
+      ? "答案是：" + question.word.word + "（" + question.word.zh + "）"
+      : "答案是：" + question.sentence.words.join(" ");
+    if (question.word) ProgressStore.recordAnswer(question.word.id, false);
+    else ProgressStore.recordAnswer(null, false);
+    state.feedbackOk = false;
+    render();
+  }
+  function nextQuestion() {
+    state.index += 1;
+    state.feedback = "";
+    state.feedbackOk = false;
+    render();
+  }
+  function renderResult() {
+    if (state.finished) return;
+    state.finished = true;
+    const total = state.seeds.length;
+    const stars = state.stars;
+    const wrongWords = state.wrongThisRound.map(getWord).filter(Boolean);
+    if (!state.resultSaved) {
+      state.resultSaved = true;
+      if (state.mode === "normal") ProgressStore.recordRound(state.themeId, stars, total);
+    }
+    const best = state.mode === "normal" ? ProgressStore.getBest(state.themeId) : stars;
+    screenEl().innerHTML = `
+      <section class="result-screen">
+        <h1>本轮完成！</h1>
+        <div class="result-stars">${UI.starsText(stars, total)}</div>
+        <p class="result-line">获得 <strong>${stars}</strong> 颗星${state.mode === "normal" ? `，本主题最高 <strong>${best}</strong> 颗星` : ""}</p>
+        ${wrongWords.length ? `<div class="wrong-box"><h3>本轮错题</h3>${wrongWords.map((word) => `
+          <div class="wrong-item"><span class="emoji-sm">${word.emoji}</span><span>${word.word} · ${word.zh}</span></div>`).join("")}</div>`
+          : '<p class="hint">全部答对，太厉害了！</p>'}
+        <div class="result-actions">
+          ${wrongWords.length ? '<button class="btn primary" id="reviewRound">复习本轮错题</button>' : ""}
+          <button class="btn primary" id="playAgain">再玩一次</button>
+          <button class="btn" id="chooseTheme">选择主题</button>
+          <button class="btn" id="backHome">回到首页</button>
+        </div>
+      </section>`;
+    if (wrongWords.length) {
+      document.getElementById("reviewRound").onclick = () => {
+        start({ ageGroup: state.ageGroup, themeId: state.themeId, reviewWordIds: wrongWords.map((word) => word.id) });
+      };
+    }
+    document.getElementById("playAgain").onclick = () => {
+      if (state.mode === "review") {
+        const ids = ProgressStore.getWrongWordIds().slice(0, 10);
+        if (ids.length > 0) start({ ageGroup: state.ageGroup, reviewWordIds: ids });
+        else { const age = state.ageGroup; stop(); if (window.App) window.App.goThemeSelect(age); }
+      } else {
+        start({ ageGroup: state.ageGroup, themeId: state.themeId });
+      }
+    };
+    document.getElementById("chooseTheme").onclick = () => {
+      const age = state.ageGroup; stop(); if (window.App) window.App.goThemeSelect(age);
+    };
+    document.getElementById("backHome").onclick = () => { stop(); if (window.App) window.App.goHome(); };
+  }
+  function startReviewAll() {
+    const ids = ProgressStore.getWrongWordIds();
+    if (ids.length === 0) { window.showToast("还没有错题，先玩一轮吧"); return; }
+    start({ ageGroup: "expert", reviewWordIds: ids.slice(0, 10) });
+  }
+  return { start, startReviewAll, stop, isRunning };
+})();
+
+const App = (function () {
+  const screenEl = () => document.getElementById("screen");
+  let currentAge = "basic";
+  function init() {
+    document.getElementById("btnHome").addEventListener("click", async () => {
+      if (Game.isRunning()) {
+        const ok = await UI.confirmDialog({
+          title: "退出关卡",
+          body: "退出后本关进度不会保存，确定退出吗？",
+          confirmText: "退出", cancelText: "继续答题", danger: true
+        });
+        if (!ok) return;
+        Game.stop();
+      }
+      goHome();
+    });
+    document.getElementById("btnMute").addEventListener("click", () => {
+      const muted = AudioManager.toggle();
+      updateMuteIcon();
+      window.showToast(muted ? "已静音" : "声音已打开");
+    });
+    updateMuteIcon();
+    goHome();
+  }
+  function updateMuteIcon() {
+    document.getElementById("btnMute").textContent = AudioManager.isMuted() ? "🔇" : "🔊";
+  }
+  function setTopTitle(title) { document.getElementById("topTitle").textContent = title; }
+  function goHome() {
+    Game.stop();
+    setTopTitle("英语奇趣岛");
+    const stats = ProgressStore.getStats();
+    screenEl().innerHTML = `
+      <section class="home-screen">
+        <div class="hero">
+          <div class="hero-icon">🏝️</div>
+          <h1>英语奇趣岛</h1>
+          <p>听一听、配一配、拼一拼、排一排，收集小星星！</p>
+        </div>
+        <div class="home-actions">
+          <button class="btn primary big" id="startBtn">开始学习</button>
+          <button class="btn" id="reportBtn">📊 学习报告</button>
+          <button class="btn" id="reviewBtn">📝 错题复习（${stats.wrongCount}）</button>
+        </div>
+        <div class="stats-card">
+          <div><strong>${stats.rounds}</strong><span>完成轮数</span></div>
+          <div><strong>${stats.accuracy}%</strong><span>总正确率</span></div>
+          <div><strong>${stats.mastered}</strong><span>已掌握词汇</span></div>
+        </div>
+        <p class="footnote">适合 3–12 岁 · 高档完整版 · 不收集个人信息</p>
+      </section>`;
+    document.getElementById("startBtn").onclick = goAgeSelect;
+    document.getElementById("reportBtn").onclick = goReport;
+    document.getElementById("reviewBtn").onclick = () => Game.startReviewAll();
+  }
+  function goAgeSelect() {
+    setTopTitle("选择年龄玩法");
+    screenEl().innerHTML = `
+      <section class="select-screen">
+        <h2>选择年龄玩法</h2>
+        <button class="mode-card" data-age="basic"><span class="mode-icon">🧸</span><span><strong>3–5 岁 · 听音找图</strong><small>听单词，点图片，可反复听，无倒计时</small></span></button>
+        <button class="mode-card" data-age="advanced"><span class="mode-icon">🎒</span><span><strong>6–8 岁 · 综合任务</strong><small>听音找图 + 词图配对 + 字母拼词</small></span></button>
+        <button class="mode-card" data-age="expert"><span class="mode-icon">🚀</span><span><strong>9–12 岁 · 句子挑战</strong><small>三种词题 + 句子排序 + 情境选择</small></span></button>
+        <button class="btn" id="backHome">返回首页</button>
+      </section>`;
+    document.querySelectorAll("[data-age]").forEach((button) => {
+      button.onclick = () => { currentAge = button.dataset.age; goThemeSelect(currentAge); };
+    });
+    document.getElementById("backHome").onclick = goHome;
+  }
+  function goThemeSelect(ageGroup) {
+    currentAge = ageGroup || currentAge;
+    setTopTitle("选择主题");
+    screenEl().innerHTML = `
+      <section class="select-screen">
+        <h2>选择主题</h2>
+        <p class="hint">每轮 10 题，获得 6 颗星可解锁下一主题。</p>
+        <div class="theme-grid">
+          ${THEMES.map((theme) => {
+            const unlocked = ProgressStore.isUnlocked(theme.id);
+            const best = ProgressStore.getBest(theme.id);
+            return `<button class="theme-card ${unlocked ? "" : "locked"}" data-theme="${theme.id}" ${unlocked ? "" : "disabled"}>
+              <span class="theme-icon">${unlocked ? theme.icon : "🔒"}</span>
+              <strong>${theme.name}</strong>
+              <small>${unlocked ? `最高 ${best} ⭐` : "完成上一主题解锁"}</small>
+            </button>`;
+          }).join("")}
+        </div>
+        <button class="btn" id="backAge">返回年龄选择</button>
+      </section>`;
+    document.querySelectorAll("[data-theme]").forEach((button) => {
+      button.onclick = () => { if (button.disabled) return; Game.start({ ageGroup: currentAge, themeId: button.dataset.theme }); };
+    });
+    document.getElementById("backAge").onclick = goAgeSelect;
+  }
+  function goReport() {
+    setTopTitle("学习报告");
+    const stats = ProgressStore.getStats();
+    const themeStats = ProgressStore.getThemeStats();
+    const wrongWords = ProgressStore.getWrongWords();
+    screenEl().innerHTML = `
+      <section class="report-screen">
+        <h2>学习报告</h2>
+        <div class="report-grid">
+          <div class="report-item"><strong>${stats.rounds}</strong><span>完成轮数</span></div>
+          <div class="report-item"><strong>${stats.totalAnswered}</strong><span>答题总数</span></div>
+          <div class="report-item"><strong>${stats.accuracy}%</strong><span>总正确率</span></div>
+          <div class="report-item"><strong>${stats.mastered}</strong><span>已掌握词汇</span></div>
+        </div>
+        <h2>各主题进度</h2>
+        ${themeStats.map((item) => `
+          <div class="theme-report">
+            <h3>${item.icon} ${item.name}</h3>
+            <p>完成 ${item.plays} 轮 · 最高 ${item.bestStars} ⭐ · 正确率 ${item.accuracy}%</p>
+            <p>已掌握 ${item.mastered}/${item.totalWords} 个词汇</p>
+          </div>`).join("")}
+        <h2>错题</h2>
+        ${wrongWords.length ? `<div class="wrong-box">${wrongWords.map((word) => `
+          <div class="wrong-item"><span class="emoji-sm">${word.emoji}</span><span>${word.word} · ${word.zh}</span></div>`).join("")}</div>`
+          : '<p class="hint">暂无错题。</p>'}
+        <div class="result-actions">
+          <button class="btn primary" id="reviewAll">错题复习</button>
+          <button class="btn" id="backHome">返回首页</button>
+          <button class="btn danger" id="resetData">重置学习数据</button>
+        </div>
+      </section>`;
+    document.getElementById("reviewAll").onclick = () => Game.startReviewAll();
+    document.getElementById("backHome").onclick = goHome;
+    document.getElementById("resetData").onclick = async () => {
+      const ok = await UI.confirmDialog({
+        title: "重置学习数据",
+        body: "将清空最高分、错题、掌握词汇和难度记录，确定吗？",
+        confirmText: "重置", cancelText: "取消", danger: true
+      });
+      if (!ok) return;
+      ProgressStore.reset();
+      DifficultyManager.reset();
+      window.showToast("学习数据已重置");
+      goReport();
+    };
+  }
+  window.App = { goHome, goAgeSelect, goThemeSelect, goReport, setTopTitle };
+  return { init, goHome, goAgeSelect, goThemeSelect, goReport, setTopTitle };
+})();
+
+document.addEventListener("DOMContentLoaded", () => App.init());
+</script>
+</body>
+</html>
